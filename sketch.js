@@ -1,59 +1,77 @@
 const Engine = Matter.Engine;
-const World= Matter.World;
+const World = Matter.World;
 const Bodies = Matter.Bodies;
-
+var thunder, thunder1,thunder2,thunder3,thunder4;
 
 var engine, world;
-var umbrella;
-var maxDrops = 100;
-var Drops = []
-var t1,t2,t3,t4;
-var thundercreated = 0;
-var thunder;
+var drops = [];
+var rand;
+
+var maxDrops=100;
+
+var thunderCreatedFrame=0;
+
 function preload(){
-    t1 = loadImage('1.png')
-    t2 = loadImage('2.png')
-    t3 = loadImage('3.png')
-    t4 = loadImage('4.png')
+    thunder1 = loadImage("thunderbolt/1.png");
+    thunder2 = loadImage("thunderbolt/2.png");
+    thunder3 = loadImage("thunderbolt/3.png");
+    thunder4 = loadImage("thunderbolt/4.png");
 }
 
 function setup(){
-createCanvas(400,400)
+    engine = Engine.create();
+    world = engine.world;
 
-//umbrella = new Umbrella(200,300)
-for(var i=0; i<maxDrops; i++){
-    maxDrops.push(new createDrop(random(0,400),random(0,400)));  
+    createCanvas(400,700);
+    umbrella = new Umbrella(200,500);
+
+    //creating drops
+    if(frameCount % 150 === 0){
+
+        for(var i=0; i<maxDrops; i++){
+            drops.push(new createDrop(random(0,400), random(0,400)));
         }
-engine = Engine.create();
-world = engine.world;    
+
+    }
+    
 }
 
 function draw(){
     Engine.update(engine);
-    for(var i=0; i<maxDrops; i++){
-    Drops[i].showDrops()
-    Drops[i].update()
-    }
-  //  umbrella.display()
-    var rand =  Math.round(random(1,4));
-    if(frameCount%80==0){
-        thundercreated = frameCount
-        thunder = createSprite(random(10,370),random(10,370)
-        ,10,10)
+    background(0); 
+
+    //creating thunder
+    rand = Math.round(random(1,4));
+    if(frameCount%80===0){
+        thunderCreatedFrame=frameCount;
+        thunder = createSprite(random(10,370), random(10,30), 10, 10);
         switch(rand){
-            case 1:thunder.addImage(t1)
+            case 1: thunder.addImage(thunder1);
             break;
-            case 2:thunder.addImage(t2)
+            case 2: thunder.addImage(thunder2);
+            break; 
+            case 3: thunder.addImage(thunder3);
             break;
-            case 3:thunder.addImage(t3)
+            case 4: thunder.addImage(thunder4);
             break;
-            case 4:thunder.addImage(t4)
-            break;
-            default:break;
+            default: break;
         }
+        thunder.scale = random(0.3,0.6)
     }
-    
-    
+
+    if(thunderCreatedFrame + 10 ===frameCount && thunder){
+        thunder.destroy();
+    }
+
+    umbrella.display();
+
+    //displaying rain drops
+    for(var i = 0; i<maxDrops; i++){
+        drops[i].showDrop();
+        drops[i].updateY()
+        
+    }
+
     drawSprites();
 }   
 
